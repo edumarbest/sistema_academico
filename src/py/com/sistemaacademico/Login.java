@@ -5,6 +5,16 @@
  */
 package py.com.sistemaacademico;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author emartins
@@ -35,7 +45,7 @@ public class Login extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 204));
@@ -48,6 +58,7 @@ public class Login extends javax.swing.JFrame {
         jTextField1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jTextField2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextField2.setName(""); // NOI18N
 
         jButton1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jButton1.setText("Cancelar");
@@ -65,7 +76,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/py/com/sistemaacademico/resources/Logo Sofia.png"))); // NOI18N
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/py/com/sistemaacademico/resources/LogoSofia.png"))); // NOI18N
         jLabel3.setText("jLabel1");
         jLabel3.setMaximumSize(new java.awt.Dimension(125, 84));
         jLabel3.setMinimumSize(new java.awt.Dimension(125, 84));
@@ -124,7 +135,25 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        String url = "jdbc:mysql://localhost:3306/mydb";
+        try {
+            Class.forName ("com.mysql.jdbc.Driver").newInstance ();
+            Connection conn = DriverManager.getConnection (url, "root", "root");
+            Statement stmt = conn.createStatement();
+            String sql = "select count(*) as existe from mydb.USUARIOS where usuario = '" + jTextField2.getText() + "' and password = '" + jTextField1.getText() + "'";
+            ResultSet rs = stmt.executeQuery(sql);
+            rs.next();
+            if(rs.getInt("existe") != 0){
+                this.dispose();
+                new Principal().setVisible(true);
+            }else{
+                JOptionPane.showMessageDialog(null, "Usuario o Password invalido");
+            }
+            
+            
+        } catch (SQLException | ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(Login.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
